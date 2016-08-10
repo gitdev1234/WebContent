@@ -13,6 +13,7 @@
 #include <map>
 #include <string>
 #include <iostream>
+#include <time.h>
 
 using namespace std;
 
@@ -24,11 +25,24 @@ using namespace std;
  * which can be used by two software modules to exchange data.
  */
 struct DataBuffer{
+    // dateTimes;
+    bool useDateTimes = false;
+    struct tm startDateTime;
+    struct tm endDateTime;
 
+    // data-source
+    string dataSource;
+    bool useDataSource = false;
+
+    // data - content
     map<string,double> data;
 
     // operators
+    bool operator== (DataBuffer& other_);
     friend ostream& operator<<(ostream& oStream_,DataBuffer dataBuffer_);
+
+    // miscellaneous
+    bool compareCTimeEqual(struct tm time1_, struct tm time2_) ;
 };
 
 /**

@@ -16,8 +16,10 @@
 DataBuffer OpenWeatherMap::readWebContent() {
     // --- TODO -- dummy code ---
     DataBuffer temp;
-    temp.data["Temperature"] = rand() % 60;
-    temp.data["AirPressure"] = (rand() % 400) + 800;
+    temp.dataSource = "Forecast";
+    temp.useDataSource = true;
+    temp.data["Lufttemperatur_2m"] = rand() % 60;
+    temp.data["Luftdruck_2m"] = (rand() % 400) + 800;
 
     cout << "read WebContent OpenWeatherMap" << endl;
     return temp;

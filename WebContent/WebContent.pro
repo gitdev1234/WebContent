@@ -15,6 +15,8 @@ CONFIG   += c++11
 
 TEMPLATE = app
 
+INCLUDEPATH += include/
+INCLUDEPATH += ../include/
 
 SOURCES += main.cpp \
     src/OpenWeatherMap.cpp \

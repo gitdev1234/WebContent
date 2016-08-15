@@ -18,13 +18,27 @@ TEMPLATE = app
 INCLUDEPATH += include/
 INCLUDEPATH += ../include/
 
-SOURCES += main.cpp \
+LIBS += -lcurl
+
+SOURCES += \
     src/OpenWeatherMap.cpp \
     src/WebContent.cpp \
-    src/DataBuffer.cpp
+    src/DataBuffer.cpp \
+    src/DBInterface.cpp \
+    src/HTTPRequest.cpp \
+    src/LogWriter.cpp \
+    src/SLevel.cpp \
+    test/main.cpp \
+    main_old.cpp
 
 HEADERS += \
     include/OpenWeatherMap.h \
     include/WebContent.h \
     include/WebContentType.h \
-    include/DataBuffer.h
+    include/DataBuffer.h \
+    include/catch.hpp \
+    include/DBInterface.h \
+    include/HTTPRequest.h \
+    include/LogWriter.h \
+    include/SLevel.h \
+    include/Config.h

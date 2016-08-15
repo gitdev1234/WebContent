@@ -18,7 +18,7 @@ CXXFLAGS      = -m64 -pipe -g -std=c++0x -Wall -W -D_REENTRANT -fPIE $(DEFINES)
 INCPATH       = -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64 -I../WebContent -I../WebContent/include -I../include/ -isystem /usr/include/x86_64-linux-gnu/qt5 -isystem /usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I.
 LINK          = g++
 LFLAGS        = -m64
-LIBS          = $(SUBLIBS) -lQt5Core -lpthread 
+LIBS          = $(SUBLIBS) -lcurl -lQt5Core -lpthread 
 AR            = ar cqs
 RANLIB        = 
 QMAKE         = /usr/lib/x86_64-linux-gnu/qt5/bin/qmake
@@ -45,14 +45,24 @@ OBJECTS_DIR   = ./
 
 ####### Files
 
-SOURCES       = ../WebContent/main.cpp \
-		../WebContent/src/OpenWeatherMap.cpp \
+SOURCES       = ../WebContent/src/OpenWeatherMap.cpp \
 		../WebContent/src/WebContent.cpp \
-		../WebContent/src/DataBuffer.cpp 
-OBJECTS       = main.o \
-		OpenWeatherMap.o \
+		../WebContent/src/DataBuffer.cpp \
+		../WebContent/src/DBInterface.cpp \
+		../WebContent/src/HTTPRequest.cpp \
+		../WebContent/src/LogWriter.cpp \
+		../WebContent/src/SLevel.cpp \
+		../WebContent/test/main.cpp \
+		../WebContent/main_old.cpp 
+OBJECTS       = OpenWeatherMap.o \
 		WebContent.o \
-		DataBuffer.o
+		DataBuffer.o \
+		DBInterface.o \
+		HTTPRequest.o \
+		LogWriter.o \
+		SLevel.o \
+		main.o \
+		main_old.o
 DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/common/shell-unix.conf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/common/unix.conf \
@@ -110,10 +120,15 @@ DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/exceptions.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/yacc.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/lex.prf \
-		../WebContent/WebContent.pro ../WebContent/main.cpp \
-		../WebContent/src/OpenWeatherMap.cpp \
+		../WebContent/WebContent.pro ../WebContent/src/OpenWeatherMap.cpp \
 		../WebContent/src/WebContent.cpp \
-		../WebContent/src/DataBuffer.cpp
+		../WebContent/src/DataBuffer.cpp \
+		../WebContent/src/DBInterface.cpp \
+		../WebContent/src/HTTPRequest.cpp \
+		../WebContent/src/LogWriter.cpp \
+		../WebContent/src/SLevel.cpp \
+		../WebContent/test/main.cpp \
+		../WebContent/main_old.cpp
 QMAKE_TARGET  = WebContent
 DESTDIR       = #avoid trailing-slash linebreak
 TARGET        = WebContent
@@ -272,7 +287,7 @@ qmake_all: FORCE
 
 dist: 
 	@test -d .tmp/WebContent1.0.0 || mkdir -p .tmp/WebContent1.0.0
-	$(COPY_FILE) --parents $(DIST) .tmp/WebContent1.0.0/ && $(COPY_FILE) --parents ../WebContent/include/OpenWeatherMap.h ../WebContent/include/WebContent.h ../WebContent/include/WebContentType.h ../WebContent/include/DataBuffer.h .tmp/WebContent1.0.0/ && $(COPY_FILE) --parents ../WebContent/main.cpp ../WebContent/src/OpenWeatherMap.cpp ../WebContent/src/WebContent.cpp ../WebContent/src/DataBuffer.cpp .tmp/WebContent1.0.0/ && (cd `dirname .tmp/WebContent1.0.0` && $(TAR) WebContent1.0.0.tar WebContent1.0.0 && $(COMPRESS) WebContent1.0.0.tar) && $(MOVE) `dirname .tmp/WebContent1.0.0`/WebContent1.0.0.tar.gz . && $(DEL_FILE) -r .tmp/WebContent1.0.0
+	$(COPY_FILE) --parents $(DIST) .tmp/WebContent1.0.0/ && $(COPY_FILE) --parents ../WebContent/include/OpenWeatherMap.h ../WebContent/include/WebContent.h ../WebContent/include/WebContentType.h ../WebContent/include/DataBuffer.h ../WebContent/include/catch.hpp ../WebContent/include/DBInterface.h ../WebContent/include/HTTPRequest.h ../WebContent/include/LogWriter.h ../WebContent/include/SLevel.h ../WebContent/include/Config.h .tmp/WebContent1.0.0/ && $(COPY_FILE) --parents ../WebContent/src/OpenWeatherMap.cpp ../WebContent/src/WebContent.cpp ../WebContent/src/DataBuffer.cpp ../WebContent/src/DBInterface.cpp ../WebContent/src/HTTPRequest.cpp ../WebContent/src/LogWriter.cpp ../WebContent/src/SLevel.cpp ../WebContent/test/main.cpp ../WebContent/main_old.cpp .tmp/WebContent1.0.0/ && (cd `dirname .tmp/WebContent1.0.0` && $(TAR) WebContent1.0.0.tar WebContent1.0.0 && $(COMPRESS) WebContent1.0.0.tar) && $(MOVE) `dirname .tmp/WebContent1.0.0`/WebContent1.0.0.tar.gz . && $(DEL_FILE) -r .tmp/WebContent1.0.0
 
 
 clean:compiler_clean 
@@ -309,12 +324,6 @@ compiler_clean:
 
 ####### Compile
 
-main.o: ../WebContent/main.cpp ../WebContent/include/WebContent.h \
-		../WebContent/include/WebContentType.h \
-		../WebContent/include/DataBuffer.h \
-		../WebContent/include/OpenWeatherMap.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o ../WebContent/main.cpp
-
 OpenWeatherMap.o: ../WebContent/src/OpenWeatherMap.cpp ../WebContent/include/OpenWeatherMap.h \
 		../WebContent/include/WebContentType.h \
 		../WebContent/include/DataBuffer.h
@@ -327,6 +336,46 @@ WebContent.o: ../WebContent/src/WebContent.cpp ../WebContent/include/WebContent.
 
 DataBuffer.o: ../WebContent/src/DataBuffer.cpp ../WebContent/include/DataBuffer.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o DataBuffer.o ../WebContent/src/DataBuffer.cpp
+
+DBInterface.o: ../WebContent/src/DBInterface.cpp ../WebContent/include/DBInterface.h \
+		../WebContent/include/DataBuffer.h \
+		../WebContent/include/Config.h \
+		../WebContent/include/LogWriter.h \
+		../WebContent/include/SLevel.h \
+		../WebContent/include/HTTPRequest.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o DBInterface.o ../WebContent/src/DBInterface.cpp
+
+HTTPRequest.o: ../WebContent/src/HTTPRequest.cpp ../WebContent/include/HTTPRequest.h \
+		../WebContent/include/LogWriter.h \
+		../WebContent/include/SLevel.h \
+		../WebContent/include/Config.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o HTTPRequest.o ../WebContent/src/HTTPRequest.cpp
+
+LogWriter.o: ../WebContent/src/LogWriter.cpp ../WebContent/include/LogWriter.h \
+		../WebContent/include/SLevel.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o LogWriter.o ../WebContent/src/LogWriter.cpp
+
+SLevel.o: ../WebContent/src/SLevel.cpp ../WebContent/include/SLevel.h \
+		../WebContent/include/LogWriter.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o SLevel.o ../WebContent/src/SLevel.cpp
+
+main.o: ../WebContent/test/main.cpp ../WebContent/include/catch.hpp \
+		../WebContent/include/WebContent.h \
+		../WebContent/include/WebContentType.h \
+		../WebContent/include/DataBuffer.h \
+		../WebContent/include/OpenWeatherMap.h \
+		../WebContent/include/DBInterface.h \
+		../WebContent/include/Config.h \
+		../WebContent/include/LogWriter.h \
+		../WebContent/include/SLevel.h \
+		../WebContent/include/HTTPRequest.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o ../WebContent/test/main.cpp
+
+main_old.o: ../WebContent/main_old.cpp ../WebContent/include/WebContent.h \
+		../WebContent/include/WebContentType.h \
+		../WebContent/include/DataBuffer.h \
+		../WebContent/include/OpenWeatherMap.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main_old.o ../WebContent/main_old.cpp
 
 ####### Install
 

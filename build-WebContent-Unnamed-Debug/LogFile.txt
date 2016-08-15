@@ -1,0 +1,1 @@
+15/08/16-14:57:09 - INFO      - DBInterface - Initialized DBInterface with url : http://localhost:8086.

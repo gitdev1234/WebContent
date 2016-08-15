@@ -8,7 +8,7 @@
 #include "DBInterface.h"
 
 
-// --- Tests for Sensor
+// --- Tests for WebContent
 
 TEST_CASE("readWebContent works") {
     // create and init singleton-DBInterface-object

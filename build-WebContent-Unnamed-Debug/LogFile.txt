@@ -38,3 +38,7 @@
 16/08/16-01:56:04 - INFO      - DBInterface - Initialized DBInterface with url : http://localhost:8086.
 16/08/16-02:01:25 - INFO      - DBInterface - Initialized DBInterface with url : http://localhost:8086.
 16/08/16-02:11:18 - INFO      - DBInterface - Initialized DBInterface with url : http://localhost:8086.
+16/08/16-13:38:01 - INFO      - DBInterface - Initialized DBInterface with url : http://localhost:8086.
+16/08/16-13:39:27 - INFO      - DBInterface - Initialized DBInterface with url : http://localhost:8086.
+16/08/16-13:40:18 - INFO      - DBInterface - Initialized DBInterface with url : http://localhost:8086.
+16/08/16-13:51:48 - INFO      - DBInterface - Initialized DBInterface with url : http://localhost:8086.

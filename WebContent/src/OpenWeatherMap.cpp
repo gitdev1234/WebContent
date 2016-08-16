@@ -78,7 +78,6 @@ DataBuffer OpenWeatherMap::jsonToDataBuffer(const string &jsonString_) {
     // parse json from influxdb
     if (jsonObject.contains(QString("list"))) {
         QJsonArray jsonArray = jsonObject["list"].toArray();
-        cout << "size : " << jsonArray.size() << endl;
 
         bool foundSearchedForecastTime = false;
         for (int i = 0; i < jsonArray.size(); i++) {
@@ -114,7 +113,7 @@ DataBuffer OpenWeatherMap::jsonToDataBuffer(const string &jsonString_) {
                     }
                     // wind direction
                     if(jsonObject2.contains("deg")) {
-                        result.data["Wind_Richtung"] = jsonObject2["deg"].toDouble();
+                        result.data["Windrichtung"] = jsonObject2["deg"].toDouble();
                     }
                 } else {
                     log << SLevel(ERROR) << "Aborted parsing json to databuffer because json was not containing " <<

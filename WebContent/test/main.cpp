@@ -17,11 +17,6 @@ TEST_CASE("readWebContent works") {
     // todo
     dbi.writeStatusOK(true);
 
-    // --- TODO -- dummy code ---
-    // randomize
-    srand(time(NULL));
-    // --- TODO -- dummy code ---
-
     SECTION("readWebContent works for OpenWeatherMap") {
         WebContent WebContent1;
         WebContent1.setWebContentType(new OpenWeatherMap());
